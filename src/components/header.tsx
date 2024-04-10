@@ -1,6 +1,6 @@
 import { Separator } from '@radix-ui/react-separator'
 import { Home, Pizza, UtensilsCrossed } from 'lucide-react'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from './nav-link'
 
 export function Header() {
   return (
