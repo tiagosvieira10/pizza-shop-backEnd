@@ -1,13 +1,14 @@
+import { useMutation } from '@tanstack/react-query'
+import { Helmet } from 'react-helmet-async'
+import { useForm } from 'react-hook-form'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+import { z } from 'zod'
+
+import { registerRestaurant } from '@/api/register-restaurant'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Helmet } from 'react-helmet-async'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { toast } from 'sonner'
-import { Link, useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
-import { registerRestaurant } from '@/api/register-restaurant'
 
 const signUpForm = z.object({
   restaurantName: z.string(),
@@ -34,7 +35,7 @@ export function SignUp() {
   async function handleSignUp(data: SignUpForm) {
     try {
       await registerRestaurantFn({
-        restauranteName: data.restaurantName,
+        restaurantName: data.restaurantName,
         managerName: data.managerName,
         email: data.email,
         phone: data.phone,
@@ -46,7 +47,7 @@ export function SignUp() {
           onClick: () => navigate(`/sign-in?email=${data.email}`),
         },
       })
-    } catch {
+    } catch (error) {
       toast.error('Erro ao cadastrar restaurante.')
     }
   }
@@ -54,12 +55,12 @@ export function SignUp() {
   return (
     <>
       <Helmet title="Cadastro" />
+
       <div className="p-8">
         <Button variant="ghost" asChild className="absolute right-8 top-8">
-          <Link to="/sign-in" className="">
-            Fazer login
-          </Link>
+          <Link to="/sign-in">Fazer login</Link>
         </Button>
+
         <div className="flex w-[350px] flex-col justify-center gap-6">
           <div className="flex flex-col gap-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
@@ -70,7 +71,7 @@ export function SignUp() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(handleSignUp)} className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit(handleSignUp)}>
             <div className="space-y-2">
               <Label htmlFor="restaurantName">Nome do estabelecimento</Label>
               <Input
@@ -105,12 +106,12 @@ export function SignUp() {
 
             <p className="px-6 text-center text-sm leading-relaxed text-muted-foreground">
               Ao continuar, você concorda com nossos{' '}
-              <a className="underline underline-offset-4" href="">
+              <a href="" className="underline underline-offset-4">
                 termos de serviço
               </a>{' '}
               e{' '}
-              <a className="underline underline-offset-4" href="">
-                políticas de privacidade.
+              <a href="" className="underline underline-offset-4">
+                políticas de privacidade
               </a>
             </p>
           </form>
