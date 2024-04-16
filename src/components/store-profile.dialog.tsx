@@ -1,4 +1,7 @@
-import { getManagedRestaurant } from '@/api/get-managed-restaurant'
+import {
+  GetManagedRestaurantResponse,
+  getManagedRestaurant,
+} from '@/api/get-managed-restaurant'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button } from './ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -49,14 +52,19 @@ export function StoreProfileDialog() {
   const { mutateAsync: updateProfileFn } = useMutation({
     mutationFn: updateProfile,
     onSuccess(_, { name, description }) {
-      const cached = queryClient.getQueryData(['managed-restaurant'])
+      const cached = queryClient.getQueryData<GetManagedRestaurantResponse>([
+        'managed-restaurant',
+      ])
 
       if (cached) {
-        queryClient.setQueryData(['managed-restaurant'], {
-          ...cached,
-          name,
-          description,
-        })
+        queryClient.setQueryData<GetManagedRestaurantResponse>(
+          ['managed-restaurant'],
+          {
+            ...cached,
+            name,
+            description,
+          },
+        )
       }
     },
   })
