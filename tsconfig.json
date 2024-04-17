@@ -28,6 +28,6 @@
     }
 
   },
-  "include": ["src"],
+  "include": ["src", "../../../../Downloads/ignite-reactjs-04-pizzashop-web-53e13c74da6bf55d580f3284944800d420237c41/src/components"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

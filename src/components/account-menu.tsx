@@ -1,21 +1,23 @@
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { Building, ChevronDown, LogOut } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
+import { getManagedRestaurant } from '@/api/get-managed-restaurant'
+import { getProfile } from '@/api/get-profile'
+import { signOut } from '@/api/sign-out'
+
+import { StoreProfileDialog } from './store-profile-dialog'
+import { Button } from './ui/button'
+import { Dialog, DialogTrigger } from './ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuTrigger,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from './ui/dropdown-menu'
-import { Button } from './ui/button'
-import { Building, ChevronDown, LogOut } from 'lucide-react'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { getProfile } from '@/api/get-profile'
-import { getManagedRestaurant } from '@/api/get-managed-restaurant'
 import { Skeleton } from './ui/skeleton'
-import { Dialog, DialogTrigger } from './ui/dialog'
-import { StoreProfileDialog } from './store-profile.dialog'
-import { signOut } from '@/api/sign-out'
-import { useNavigate } from 'react-router-dom'
 
 export function AccountMenu() {
   const navigate = useNavigate()
@@ -36,7 +38,7 @@ export function AccountMenu() {
   const { mutateAsync: signOutFn, isPending: isSigningOut } = useMutation({
     mutationFn: signOut,
     onSuccess: () => {
-      navigate('sign-in', { replace: true })
+      navigate('/sign-in', { replace: true })
     },
   })
 
@@ -56,16 +58,16 @@ export function AccountMenu() {
             <ChevronDown className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel className="flex flex-col">
             {isLoadingProfile ? (
               <div className="space-y-1.5">
                 <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-3 w-24" />
               </div>
             ) : (
               <>
-                {' '}
                 <span>{profile?.name}</span>
                 <span className="text-xs font-normal text-muted-foreground">
                   {profile?.email}

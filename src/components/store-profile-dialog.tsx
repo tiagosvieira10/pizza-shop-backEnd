@@ -1,10 +1,16 @@
-import {
-  GetManagedRestaurantResponse,
-  getManagedRestaurant,
-} from '@/api/get-managed-restaurant'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Button } from './ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+
+import {
+  getManagedRestaurant,
+  GetManagedRestaurantResponse,
+} from '@/api/get-managed-restaurant'
+import { updateProfile } from '@/api/update-profile'
+
+import { Button } from './ui/button'
 import {
   DialogClose,
   DialogContent,
@@ -16,10 +22,6 @@ import {
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { Textarea } from './ui/textarea'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { updateProfile } from '@/api/update-profile'
-import { toast } from 'sonner'
 
 const storeProfileSchema = z.object({
   name: z.string().min(1),
@@ -49,7 +51,21 @@ export function StoreProfileDialog() {
     },
   })
 
-  function upDateManagedRestaurantCache({
+  const { mutateAsync: updateProfileFn } = useMutation({
+    mutationFn: updateProfile,
+    onMutate({ description, name }) {
+      const { cached } = updateManagedRestaurantCache({ description, name })
+
+      return { previousProfile: cached }
+    },
+    onError(_, __, context) {
+      if (context?.previousProfile) {
+        updateManagedRestaurantCache(context.previousProfile)
+      }
+    },
+  })
+
+  function updateManagedRestaurantCache({
     name,
     description,
   }: StoreProfileSchema) {
@@ -71,20 +87,6 @@ export function StoreProfileDialog() {
     return { cached }
   }
 
-  const { mutateAsync: updateProfileFn } = useMutation({
-    mutationFn: updateProfile,
-    onMutate({ name, description }) {
-      const { cached } = upDateManagedRestaurantCache({ name, description })
-
-      return { previousProfile: cached }
-    },
-    onError(_, __, context) {
-      if (context?.previousProfile) {
-        upDateManagedRestaurantCache(context.previousProfile)
-      }
-    },
-  })
-
   async function handleUpdateProfile(data: StoreProfileSchema) {
     try {
       await updateProfileFn({
@@ -94,7 +96,7 @@ export function StoreProfileDialog() {
 
       toast.success('Perfil atualizado com sucesso!')
     } catch {
-      toast.error('Falha ao atualizar o perfil, tente novamente!')
+      toast.error('Falha ao atualizar o perfil, tente novamente')
     }
   }
 
@@ -106,6 +108,7 @@ export function StoreProfileDialog() {
           Atualize as informações do seu estabelecimento visíveis ao seu cliente
         </DialogDescription>
       </DialogHeader>
+
       <form onSubmit={handleSubmit(handleUpdateProfile)}>
         <div className="space-y-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
@@ -126,6 +129,7 @@ export function StoreProfileDialog() {
             />
           </div>
         </div>
+
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="ghost" type="button">
